@@ -45,7 +45,7 @@ async getProducts()
     (
       <View style={{flex:1, padding:25}}>
         {isLoading ? <ActivityIndicator/> : (
-          <Flatlist data={data}
+          <FlatList data={data}
           keyExtractor={({id}, index) => id}
           renderItem ={({item}) => (
             <Text>{item.name} - {item.price}</Text>
