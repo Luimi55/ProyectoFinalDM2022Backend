@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import { ActivityIndicator, FlatList, Text, View, Image, TouchableOpacity } from 'react-native';
+import List from './src/components/List';
 
 export default class App extends Component
 {
@@ -8,19 +9,23 @@ export default class App extends Component
     super(propos);
 
     this.state = {
-      data: [],
+      productsData: [],
+      marketsData: [],
       isLoading: true
     };
 
 }
 
-async getProducts()
+async getAll()
   {
     try
     {
       const response = await fetch('https://localhost:7204/api/Products');
       const json = await response.json();
-      this.state.data = json;
+      this.state.productsData = json;
+      const response1 = await fetch('https://localhost:7204/api/Markets');
+      const json1 = await response1.json();
+      this.state.marketsData = json1;
     }
     catch(error)
     {
@@ -34,29 +39,21 @@ async getProducts()
 
   componentDidMount()
   {
-    this.getProducts();
+    this.getAll();
   }
 
   render()
   {
-    const {data, isLoading} = this.state;
-
+    const {productsData, marketsData, isLoading} = this.state;
+    
     return (
+      
       <View style={{flex:1, padding:25, backgroundColor: '#a6edab'}}>
+        <View style={{backgroundColor: '#fff', marginBottom: 20, alignItems: 'center', borderWidth: 3}}>
+          <Text style={{fontSize: 30, fontWeight: 'bold', marginBottom: 10}}>Products</Text>
+        </View>
         {isLoading ? <ActivityIndicator/> : (
-          <FlatList data={data}
-          keyExtractor={({id}, index) => id}
-          renderItem ={({item}) => (
-            <View style={{flex:1, marginBottom:  10, borderWidth: 2, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
-              <Image source={{uri: 'https://random.imagecdn.app/70/70'}} style={{ width: 100, height: 100 }} />
-              <Text style={{fontSize: 18}}>{item.name} - {item.price}$ </Text>
-              <TouchableOpacity
-                onPress={() => alert('Prodcuct: ' + item.name + '\nPrice: ' + item.price)}
-                style={{backgroundColor: '#33b2e8', height: 100, width: 100, justifyContent: 'center', alignItems: 'center'}}>
-                <Text style={{ fontSize: 20, color: '#fff'}}>More Info</Text>
-              </TouchableOpacity>
-            </View>
-          )}/>
+          <List productsData={productsData} marketsData={marketsData}/>
         )}
       </View>
       
